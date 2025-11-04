@@ -9,7 +9,6 @@ from bs4 import BeautifulSoup
 import json
 import time
 
-
 # READING IN AND UNDERSTANDING THE DATA =======================================
 
 data_df = pd.DataFrame()
@@ -220,7 +219,9 @@ print("\n✅ Successfully parsed games:", len(games_df))
 print("❌ Failed games:", len(failed_games), ':', failed_games)
 print(games_df.head())
 
+#games_df['result'] = (games_df['home_score'] > games_df['away_score']).astype(int)
 games_df.to_csv('/Users/harounshah/Downloads/Senior Thesis/Final.csv', index=False)
+
 
 
 # MESSING W JSON EXPLORATION ETC ==============================================
