@@ -26,7 +26,7 @@ Data Cleaning:
         There are 1283 games where away intercepting is missing.
         There are 1322 games where home intercepting is missing.
         There are 2395 games where ALL DEFENSIVE DATA IS MISSING.
-
+        
     Solutions to Missing Data:
         Remove games with rare missing data.
         Remove punting, kick returning, and punt returning data.
