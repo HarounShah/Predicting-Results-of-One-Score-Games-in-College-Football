@@ -26,13 +26,14 @@ games = pd.merge(
 )
 
 print(f"Merged shape: {games.shape}")
-print(games[["game_id", "team_home", "team_away", "points_home", "points_away"]].head())
+# print(games[["game_id", "team_home", "team_away", "points_home", "points_away"]].head())
 
 # --- Create target variables ---
 games["home_win"] = (games["points_home"] > games["points_away"]).astype(int)
 games["one_score"] = (abs(games["points_home"] - games["points_away"]) <= 8).astype(int)
 
-games = games.drop([
+# --- Dropping Non-Interesting Columns ---
+cols_to_drop = [
     'totalPenaltiesYards_away', 
     'totalPenaltiesYards_home', 
     'kickReturns_away', 
@@ -53,11 +54,11 @@ games = games.drop([
     'puntReturnTDs_home',
     'defensiveTDs_away',
     'defensiveTDs_home'
-    ], axis = 1)
-pd.set_option('display.max_rows', None)
+    ]
+games = games.drop(cols_to_drop, axis = 1)
 
 # --- Identify numeric columns to create difference features ---
-num_cols = [col for col in games.columns if any(stat in col for stat in ["Yards", "TDs", "turnovers", "points"])]
+num_cols = [col for col in games.columns if any(stat.lower() in col.lower() for stat in ["yards", "tds", "turnovers", "points", 'interceptions', 'fumbles', 'turnovers', 'sacks', 'passes', 'hurries', 'tackles', 'downs'])]
 
 # --- Convert numeric columns safely ---
 for col in num_cols:
@@ -69,19 +70,20 @@ for col in num_cols:
         away_col = col.replace("_home", "_away")
         diff_col = col.replace("_home", "_diff")
         games[diff_col] = games[col] - games[away_col]
+print(f"Created {len(num_cols)} difference features.")
 
-# print(f"Created {len(num_cols)} difference features.")
 
-# --- Save the final combined dataset ---
-games.to_csv("cfbd_games_2014_2024_combined.csv", index=False)
-print(f"\n💾 Saved {games.shape[0]} rows × {games.shape[1]} columns → cfbd_games_2014_2024_combined.csv")
+# --- Remove Nulls and Save the Combined Dataset ---
+games = games[games["one_score"] == 1]
+print(f"Shape of One-Score Games: {games.shape}")
 
+pd.set_option('display.max_rows', None)
 null_counts = games.isnull().sum().sort_values(ascending=False)
-print(null_counts)
+# print(null_counts)
 
 no_nulls = games.dropna()
-print(no_nulls.shape)
+print(f"Shape After Dropping Nulls: {no_nulls.shape}")
+print(no_nulls.columns)
 
-# --- Save the final combined dataset ---
 no_nulls.to_csv("cfbd_games_2014_2024_combined.csv", index=False)
 print(f"\n💾 Saved {no_nulls.shape[0]} rows × {no_nulls.shape[1]} columns → cfbd_games_2014_2024_combined.csv")

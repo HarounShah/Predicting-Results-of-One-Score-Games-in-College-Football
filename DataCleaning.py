@@ -25,7 +25,6 @@ data = data.drop(columns_to_drop, axis = 1) # Removing QBR, punting, punt return
 # data = data.drop(rows_to_drop, axis = 0) # Removing 'odd' games with important missing data
 
 pd.set_option('display.max_rows', None)
-# pd.set_option('display.max_columns', None)
 
 print(data.head())
 print(data.shape)
@@ -33,9 +32,7 @@ print(data.shape)
 null_counts = data.isnull().sum().sort_values(ascending=False)
 print(null_counts)
 
-# print(data[data['away_interceptions'].isnull()])
-print(data[data['away_receptions'].isnull()])
-
-# print(data[data['home_interceptions'].isnull()]['away_interceptions'])
+no_nulls = data.dropna()
+print(no_nulls.shape)
 
 
