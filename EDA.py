@@ -50,7 +50,7 @@ plt.suptitle("Distribution of '_diff' Features", fontsize=16, y=1.02)
 plt.show()
 
 # Boxplots grid (to detect outliers)
-n_cols = 4
+n_cols = 5
 n_rows = int(len(X.columns) / n_cols) + 1
 fig, axes = plt.subplots(n_rows, n_cols, figsize=(10, n_rows * 1.8))
 axes = axes.flatten()

@@ -58,11 +58,17 @@ cols_to_drop = [
 games = games.drop(cols_to_drop, axis = 1)
 
 # --- Identify numeric columns to create difference features ---
-num_cols = [col for col in games.columns if any(stat.lower() in col.lower() for stat in ["yards", "tds", "turnovers", "points", 'interceptions', 'fumbles', 'turnovers', 'sacks', 'passes', 'hurries', 'tackles', 'downs'])]
+num_cols_names = ["time", "yards", "tds", "turnovers", "points", 'interceptions', 
+                  'fumbles', 'turnovers', 'sacks', 'passes', 'hurries', 'tackles', 
+                  'downs']
+num_cols = [col for col in games.columns if any(stat.lower() in col.lower() for stat in num_cols_names)]
 
 # --- Convert numeric columns safely ---
 for col in num_cols:
-    games[col] = pd.to_numeric(games[col], errors="coerce")  # non-numeric -> NaN
+    if 'time' in col.lower():
+        games[col] = pd.to_timedelta("00:" + games[col])
+    else:
+        games[col] = pd.to_numeric(games[col], errors="coerce")  # non-numeric -> NaN
 
 # --- Create difference features: home - away ---
 for col in num_cols:
@@ -71,6 +77,7 @@ for col in num_cols:
         diff_col = col.replace("_home", "_diff")
         games[diff_col] = games[col] - games[away_col]
 print(f"Created {len(num_cols)} difference features.")
+
 
 
 # --- Remove Nulls and Save the Combined Dataset ---
@@ -84,6 +91,8 @@ null_counts = games.isnull().sum().sort_values(ascending=False)
 no_nulls = games.dropna()
 print(f"Shape After Dropping Nulls: {no_nulls.shape}")
 print(no_nulls.columns)
+
+no_nulls['possessionTime_diff'] = no_nulls['possessionTime_diff'].dt.total_seconds().astype(int)
 
 no_nulls.to_csv("cfbd_games_2014_2024_combined.csv", index=False)
 print(f"\n💾 Saved {no_nulls.shape[0]} rows × {no_nulls.shape[1]} columns → cfbd_games_2014_2024_combined.csv")
