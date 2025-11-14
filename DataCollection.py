@@ -20,7 +20,7 @@ HEADERS = {"Authorization": f"Bearer {API_KEY}", "accept": "application/json"}
 BASE_URL = "https://api.collegefootballdata.com/games/teams"
 
 YEARS = range(2014, 2025)  # inclusive 2014–2024
-MAX_WEEKS = 15  # most seasons have up to 15 weeks (including bowls)
+MAX_WEEKS = 18  # most seasons have up to 15 weeks (including bowls)
 SLEEP_TIME = 0.5  # seconds between requests to avoid rate limits
 
 all_records = []
@@ -75,5 +75,5 @@ for col in df.columns:
     df[col] = pd.to_numeric(df[col], errors="ignore")
 
 # Save full dataset
-df.to_csv("cfbd_team_stats_2014_2024.csv", index=False)
-print(f"\n💾 Saved {df.shape[0]} rows × {df.shape[1]} columns to cfbd_team_stats_2014_2024.csv")
+df.to_csv("full_data", index=False)
+print(f"\n💾 Saved {df.shape[0]} rows × {df.shape[1]} columns to full_data.csv")

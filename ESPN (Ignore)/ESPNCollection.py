@@ -220,7 +220,7 @@ print("❌ Failed games:", len(failed_games), ':', failed_games)
 print(games_df.head())
 
 #games_df['result'] = (games_df['home_score'] > games_df['away_score']).astype(int)
-games_df.to_csv('/Users/harounshah/Downloads/Senior Thesis/Final.csv', index=False)
+games_df.to_csv('/Users/harounshah/Downloads/Senior Thesis/ESPNFinal.csv', index=False)
 
 
 

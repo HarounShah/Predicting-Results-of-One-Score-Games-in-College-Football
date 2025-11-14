@@ -13,15 +13,13 @@ import seaborn as sns
 # SPLITTING DATA INTO X & Y ===================================================
 df = pd.read_csv('/Users/harounshah/Downloads/Senior Thesis/final_data.csv')
 
-print(df.head())
-print(df.shape)
-print(df.columns)
+print(f"\nMatrix Dimensions w/ all Features: {df.shape}\n")
 
 y = df['home_win']
 X = df.filter(like="diff", axis=1) # Taking only the difference features
 
-print(X.shape)
-# print(X.columns)
+print(f"Matrix Dimensions w/ only Difference Features: {X.shape}\n")
+print(X.columns, '\n')
 
 
 # FEATURE VISUALIZATIONS ======================================================
@@ -48,7 +46,7 @@ for j in range(i + 1, len(axes)):
 
 plt.tight_layout()
 plt.suptitle("Distribution of Difference Features", fontsize=16, y=1.02)
-plt.savefig("Figures/Histograms.png")
+plt.savefig("Figures/Histograms.png", bbox_inches='tight')
 
 # BOXPLOTS
 n_cols = 4
@@ -67,14 +65,14 @@ for j in range(i + 1, len(axes)):
 
 plt.tight_layout()
 plt.suptitle("Boxplots of Difference Features", fontsize=16, y=1.02)
-plt.savefig("Figures/Boxplots.png")
+plt.savefig("Figures/Boxplots.png", bbox_inches='tight')
 
 # CORRELATION MATRIX
 plt.figure(figsize=(12, 10))
 corr = X.corr()
 sns.heatmap(corr, annot=False, cmap="coolwarm", center=0)
 plt.title("Correlation Matrix of Difference Features")
-plt.savefig("Figures/CorrelationMatrix.png")
+plt.savefig("Figures/CorrelationMatrix.png", bbox_inches='tight')
 
 # HISTOGRAMS (GROUPED BY CLASS)
 n_cols = 4
@@ -88,11 +86,23 @@ for i, col in enumerate(X.columns):
     ax.set_title(col)
     ax.set_xlabel("")
     ax.set_ylabel("Count")
-    ax.legend_.remove()
 
 for j in range(i + 1, len(axes)):
     fig.delaxes(axes[j])
 
 plt.tight_layout()
 plt.suptitle("Feature Histograms by Class", fontsize=16, y=1.02)
-plt.savefig("Figures/HistogramsByClass.png")
+plt.savefig("Figures/HistogramsByClass.png", bbox_inches='tight')
+
+# FEATURE NUMERICAL SUMMARIES
+
+summaries = pd.DataFrame()
+
+for col in X.columns:
+    desc = X[col].describe().drop('count')
+    summaries[col] = desc
+
+summaries = summaries.T 
+
+print(summaries)
+

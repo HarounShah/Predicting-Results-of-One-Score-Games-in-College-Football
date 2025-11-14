@@ -10,7 +10,7 @@ import json
 import time
 
 # --- Load team-level data ---
-df = pd.read_csv("cfbd_team_stats_2014_2024.csv")
+df = pd.read_csv("full_data.csv")
 print(f"Original shape: {df.shape}")
 
 # --- Split into home and away teams ---
@@ -53,7 +53,11 @@ cols_to_drop = [
     'puntReturns_home',
     'puntReturnTDs_home',
     'defensiveTDs_away',
-    'defensiveTDs_home'
+    'defensiveTDs_home',
+    'passesIntercepted_home', # interceptions is better
+    'passesIntercepted_away',
+    'totalFumbles_home', # fumblesLost is better
+    'totalFumbles_away'
     ]
 games = games.drop(cols_to_drop, axis = 1)
 
@@ -85,7 +89,7 @@ print(f"Shape of One-Score Games: {games.shape}")
 
 pd.set_option('display.max_rows', None)
 null_counts = games.isnull().sum().sort_values(ascending=False)
-# print(null_counts)
+print(null_counts)
 
 no_nulls = games.dropna()
 print(f"Shape After Dropping Nulls: {no_nulls.shape}")

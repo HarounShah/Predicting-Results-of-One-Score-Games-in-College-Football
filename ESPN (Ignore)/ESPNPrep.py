@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 import json
 import time
 
-data = pd.read_csv("/Users/harounshah/Downloads/Senior Thesis/Data/Final.csv")
+data = pd.read_csv("/Users/harounshah/Downloads/Senior Thesis/Data/ESPNFinal.csv")
 
 data['result'] = (data['home_score'] > data['away_score']).astype(int) # Creating label - *REMEMBER TO DELETE*
 columns_to_drop = ['home_adjQBR', 'away_adjQBR', 
