@@ -58,9 +58,8 @@ cols_to_drop = [
 games = games.drop(cols_to_drop, axis = 1)
 
 # --- Identify numeric columns to create difference features ---
-num_cols_names = ["time", "yards", "tds", "turnovers", "points", 'interceptions', 
-                  'fumbles', 'turnovers', 'sacks', 'passes', 'hurries', 'tackles', 
-                  'downs']
+num_cols_names = ["time", "yards", "turnovers", 'fumbleslost', 'turnovers', 
+                  'sacks', 'passesdef', 'hurries', 'tackles', 'downs', 'interceptions']
 num_cols = [col for col in games.columns if any(stat.lower() in col.lower() for stat in num_cols_names)]
 
 # --- Convert numeric columns safely ---
@@ -94,5 +93,5 @@ print(no_nulls.columns)
 
 no_nulls['possessionTime_diff'] = no_nulls['possessionTime_diff'].dt.total_seconds().astype(int)
 
-no_nulls.to_csv("cfbd_games_2014_2024_combined.csv", index=False)
-print(f"\n💾 Saved {no_nulls.shape[0]} rows × {no_nulls.shape[1]} columns → cfbd_games_2014_2024_combined.csv")
+no_nulls.to_csv("final_data.csv", index=False)
+print(f"\n💾 Saved {no_nulls.shape[0]} rows × {no_nulls.shape[1]} columns → final_data.csv")

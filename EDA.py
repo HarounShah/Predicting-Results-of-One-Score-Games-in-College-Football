@@ -11,14 +11,14 @@ import time
 import seaborn as sns
 
 # SPLITTING DATA INTO X & Y ===================================================
-df = pd.read_csv('/Users/harounshah/Downloads/Senior Thesis/cfbd_games_2014_2024_combined.csv')
+df = pd.read_csv('/Users/harounshah/Downloads/Senior Thesis/final_data.csv')
 
 print(df.head())
 print(df.shape)
 print(df.columns)
 
 y = df['home_win']
-X = df.filter(like="diff", axis=1)
+X = df.filter(like="diff", axis=1) # Taking only the difference features
 
 print(X.shape)
 # print(X.columns)
@@ -29,9 +29,9 @@ print(X.shape)
 sns.set(style="whitegrid", palette="muted", font_scale=0.9)
 
 # Create a figure grid — adjust size to fit all variables
-n_cols = 5
+n_cols = 4
 n_rows = int(len(X.columns) / n_cols) + 1
-fig, axes = plt.subplots(n_rows, n_cols, figsize=(10, n_rows * 1.8))
+fig, axes = plt.subplots(n_rows, n_cols, figsize=(12, n_rows * 2))
 axes = axes.flatten()
 
 # HISTOGRAMS
@@ -47,13 +47,13 @@ for j in range(i + 1, len(axes)):
     fig.delaxes(axes[j])
 
 plt.tight_layout()
-plt.suptitle("Distribution of '_diff' Features", fontsize=16, y=1.02)
-plt.show()
+plt.suptitle("Distribution of Difference Features", fontsize=16, y=1.02)
+plt.savefig("Figures/Histograms.png")
 
 # BOXPLOTS
-n_cols = 5
+n_cols = 4
 n_rows = int(len(X.columns) / n_cols) + 1
-fig, axes = plt.subplots(n_rows, n_cols, figsize=(10, n_rows * 1.8))
+fig, axes = plt.subplots(n_rows, n_cols, figsize=(12, n_rows * 2))
 axes = axes.flatten()
 
 for i, col in enumerate(X.columns):
@@ -66,20 +66,20 @@ for j in range(i + 1, len(axes)):
     fig.delaxes(axes[j])
 
 plt.tight_layout()
-plt.suptitle("Boxplots of '_diff' Features", fontsize=16, y=1.02)
-plt.show()
+plt.suptitle("Boxplots of Difference Features", fontsize=16, y=1.02)
+plt.savefig("Figures/Boxplots.png")
 
 # CORRELATION MATRIX
-plt.figure(figsize=(10, 8))
+plt.figure(figsize=(12, 10))
 corr = X.corr()
 sns.heatmap(corr, annot=False, cmap="coolwarm", center=0)
-plt.title("Correlation Matrix of '_diff' Features")
-plt.show()
+plt.title("Correlation Matrix of Difference Features")
+plt.savefig("Figures/CorrelationMatrix.png")
 
 # HISTOGRAMS (GROUPED BY CLASS)
-n_cols = 5
+n_cols = 4
 n_rows = int(len(X.columns) / n_cols) + 1
-fig, axes = plt.subplots(n_rows, n_cols, figsize=(10, n_rows * 1.8))
+fig, axes = plt.subplots(n_rows, n_cols, figsize=(12, n_rows * 2))
 axes = axes.flatten()
 
 for i, col in enumerate(X.columns):
@@ -95,4 +95,4 @@ for j in range(i + 1, len(axes)):
 
 plt.tight_layout()
 plt.suptitle("Feature Histograms by Class", fontsize=16, y=1.02)
-plt.show()
+plt.savefig("Figures/HistogramsByClass.png")
