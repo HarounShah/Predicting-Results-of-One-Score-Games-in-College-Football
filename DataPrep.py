@@ -61,6 +61,16 @@ cols_to_drop = [
     ]
 games = games.drop(cols_to_drop, axis = 1)
 
+# --- Getting efficiency metrics ---
+print(int(games["thirdDownEff_home"][0].split("-")[0]) / int(games["thirdDownEff_home"][0].split("-")[1]))
+
+games["thirdDown%_home"] = int(games["thirdDownEff_home"].split("-")[0]) / int(games["thirdDownEff_home"].split("-")[1])
+
+
+# games["thirdDown%_home"] = games["thirdDownEff_home"].split("-")[0] / games["thirdDownEff_home"].split("-")[1]
+
+# print(games["thirdDown%_home"])
+
 # --- Identify numeric columns to create difference features ---
 num_cols_names = ["time", "yards", "turnovers", 'fumbleslost', 'turnovers', 
                   'sacks', 'passesdef', 'hurries', 'tackles', 'downs', 'interceptions']
@@ -89,11 +99,11 @@ print(f"Shape of One-Score Games: {games.shape}")
 
 pd.set_option('display.max_rows', None)
 null_counts = games.isnull().sum().sort_values(ascending=False)
-print(null_counts)
+# print(null_counts)
 
 no_nulls = games.dropna()
 print(f"Shape After Dropping Nulls: {no_nulls.shape}")
-print(no_nulls.columns)
+# print(no_nulls.columns)
 
 no_nulls['possessionTime_diff'] = no_nulls['possessionTime_diff'].dt.total_seconds().astype(int)
 
