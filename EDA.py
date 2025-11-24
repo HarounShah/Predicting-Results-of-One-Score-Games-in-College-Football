@@ -70,7 +70,7 @@ plt.savefig("Figures/Boxplots.png", bbox_inches='tight')
 # CORRELATION MATRIX
 plt.figure(figsize=(12, 10))
 corr = X.corr()
-sns.heatmap(corr, annot=False, cmap="coolwarm", center=0)
+sns.heatmap(corr, annot=True, fmt=".2f", cmap="coolwarm", center=0)
 plt.title("Correlation Matrix of Difference Features")
 plt.savefig("Figures/CorrelationMatrix.png", bbox_inches='tight')
 
