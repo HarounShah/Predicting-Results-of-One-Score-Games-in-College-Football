@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import math
 import matplotlib.pyplot as plt
-import sklearn
 import requests
 from bs4 import BeautifulSoup
 import json
@@ -35,7 +34,12 @@ axes = axes.flatten()
 # HISTOGRAMS
 for i, col in enumerate(X.columns):
     ax = axes[i]
-    sns.histplot(X[col], kde=True, ax=ax, bins=20, color='skyblue')
+    if col in ["interceptions_diff", "fumblesLost_diff", "turnovers_diff"]:
+        sns.histplot(X[col], kde=True, kde_kws={"bw_adjust": 1.5}, ax=ax, bins=np.arange(X[col].min() - 0.5, X[col].max() + 1.5, 1), color='skyblue')
+    elif col == "fourthDown%_diff":
+        sns.histplot(X[col], kde=True, ax=ax, bins=15, color='skyblue')
+    else:
+        sns.histplot(X[col], kde=True, ax=ax, bins=21, color='skyblue')
     ax.set_title(col)
     ax.set_xlabel("")
     ax.set_ylabel("Count")
@@ -82,10 +86,43 @@ axes = axes.flatten()
 
 for i, col in enumerate(X.columns):
     ax = axes[i]
-    sns.histplot(data=df, x=col, hue=y, kde=True, element="step", ax=ax)
-    ax.set_title(col)
-    ax.set_xlabel("")
-    ax.set_ylabel("Count")
+    if col in ["interceptions_diff", "fumblesLost_diff", "turnovers_diff"]:
+        sns.histplot(
+            data=df,
+            x=col,
+            hue=y,
+            kde=True,
+            kde_kws={"bw_adjust": 1.5},
+            element="step",
+            ax=ax,
+            bins=np.arange(df[col].min() - 0.5, df[col].max() + 1.5, 1),
+            alpha=0.4
+        )
+    elif col == "fourthDown%_diff":
+        sns.histplot(
+            data=df,
+            x=col,
+            hue=y,
+            kde=True,
+            element="step",
+            ax=ax,
+            bins=15,
+            alpha=0.4
+        )
+    else:
+        sns.histplot(
+            data=df,
+            x=col,
+            hue=y,
+            kde=True,
+            element="step",
+            ax=ax,
+            bins=21,
+            alpha=0.4
+        )
+        ax.set_title(col)
+        ax.set_xlabel("")
+        ax.set_ylabel("Count")
 
 for j in range(i + 1, len(axes)):
     fig.delaxes(axes[j])
