@@ -91,8 +91,9 @@ print("\nAdded 4 third/fourth down efficiency features.")
 
 # --- Identify numeric columns to create difference features ---
 num_cols_names = ["time", "yards", "turnovers", 'fumbleslost', 'turnovers', 
-                  'sacks', 'passesdef', 'hurries', 'tackles', 'downs', 'interceptions']
+                  'sacks', 'passesdef', 'hurries', 'tackles', 'interceptions', 'downs', 'down%']
 num_cols = [col for col in games.columns if any(stat.lower() in col.lower() for stat in num_cols_names)]
+print(num_cols)
 
 # --- Convert numeric columns safely ---
 for col in num_cols:
@@ -118,7 +119,7 @@ print(f"\nShape of One-Score Games: {games.shape}")
 
 pd.set_option('display.max_rows', None)
 null_counts = games.isnull().sum().sort_values(ascending=False)
-# print(null_counts)
+print(null_counts)
 
 no_nulls = games.dropna().copy()
 print(f"\nShape After Dropping Nulls: {no_nulls.shape}")
