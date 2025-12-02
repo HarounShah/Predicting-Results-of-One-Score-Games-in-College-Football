@@ -79,12 +79,12 @@ temp = temp.apply(lambda col: pd.to_numeric(col, errors="coerce"))
 games["thirdDown%_away"] = temp[0] / temp[1]
 games.loc[temp[1] == 0, "thirdDown%_away"] = 0
 
-temp = games["fourthDownEff_away"].str.split("-", expand=True)
-temp = temp.apply(lambda col: pd.to_numeric(col, errors="coerce"))
-games["fourthDown%_away"] = temp[0] / temp[1]
-games.loc[temp[1] == 0, "fourthDown%_away"] = 0
+# temp = games["fourthDownEff_away"].str.split("-", expand=True)
+# temp = temp.apply(lambda col: pd.to_numeric(col, errors="coerce"))
+# games["fourthDown%_away"] = temp[0] / temp[1]
+# games.loc[temp[1] == 0, "fourthDown%_away"] = 0
 
-print("\nAdded 4 third/fourth down efficiency features.")
+print("\nAdded 3 third/fourth down efficiency features.")
 # print(games[["thirdDown%_home", "fourthDown%_home", "thirdDown%_away", "fourthDown%_away"]].head())
 
 

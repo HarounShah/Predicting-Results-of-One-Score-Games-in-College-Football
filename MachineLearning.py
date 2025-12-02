@@ -35,6 +35,6 @@ print("Random Forest Test Accuracy:", accuracy)
 importances = pd.Series(rf_model.feature_importances_, index=X.columns)
 importances.sort_values().plot(kind="barh", figsize=(12,8))
 plt.title("Feature Importances")
-plt.savefig("Figure")
+plt.savefig("Figures/Feature_Importance.png")
 
 # LOGISTIC REGRESSION =========================================================

@@ -87,39 +87,13 @@ axes = axes.flatten()
 for i, col in enumerate(X.columns):
     ax = axes[i]
     if col in ["interceptions_diff", "fumblesLost_diff", "turnovers_diff"]:
-        sns.histplot(
-            data=df,
-            x=col,
-            hue=y,
-            kde=True,
-            kde_kws={"bw_adjust": 1.5},
-            element="step",
-            ax=ax,
-            bins=np.arange(df[col].min() - 0.5, df[col].max() + 1.5, 1),
-            alpha=0.4
-        )
+        sns.histplot(data=df, x=col, hue=y, kde=True, kde_kws={"bw_adjust": 1.5}, element="step", ax=ax, bins=np.arange(df[col].min() - 0.5, df[col].max() + 1.5, 1), alpha=0.4)
+        ax.set_title(col, pad=10, loc='center')
     elif col == "fourthDown%_diff":
-        sns.histplot(
-            data=df,
-            x=col,
-            hue=y,
-            kde=True,
-            element="step",
-            ax=ax,
-            bins=15,
-            alpha=0.4
-        )
+        sns.histplot(data=df, x=col, hue=y, kde=True, element="step", ax=ax, bins=15, alpha=0.4)
+        ax.set_title(col, pad=10, loc='center')
     else:
-        sns.histplot(
-            data=df,
-            x=col,
-            hue=y,
-            kde=True,
-            element="step",
-            ax=ax,
-            bins=21,
-            alpha=0.4
-        )
+        sns.histplot(data=df, x=col, hue=y, kde=True, element="step", ax=ax, bins=21, alpha=0.4)
         ax.set_title(col)
         ax.set_xlabel("")
         ax.set_ylabel("Count")
@@ -140,6 +114,7 @@ for col in X.columns:
     summaries[col] = desc
 
 summaries = summaries.T 
+summaries.index.name = 'feature'
+summaries.to_csv("5numsums.csv", index = True)
 
-print(summaries)
 
