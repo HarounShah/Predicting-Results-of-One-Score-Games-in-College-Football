@@ -8,9 +8,11 @@ from bs4 import BeautifulSoup
 import json
 import time
 import seaborn as sns
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, roc_auc_score, RocCurveDisplay
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.svm import SVC
 
 # SPLITTING DATA INTO TRAIN AND TEST ==========================================
 df = pd.read_csv('/Users/harounshah/Downloads/Senior Thesis/final_data.csv')
@@ -20,21 +22,82 @@ print(f"\nMatrix Dimensions w/ all Features: {df.shape}\n")
 y = df['home_win']
 X = df.filter(like="diff", axis=1) # Taking only the difference features
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 42, stratify = y)
+
+# LOGISTIC REGRESSION =========================================================
+
+log_reg = LogisticRegression(max_iter = 5000)
+log_reg.fit(X_train, y_train)
+
+y_pred_lr = log_reg.predict(X_test)
+print("Logistic Regression Accuracy:", accuracy_score(y_test, y_pred_lr))
 
 # RANDOM FOREST ===============================================================
-rf_model = RandomForestClassifier(n_estimators=200, random_state=42)
+rf_model = RandomForestClassifier(n_estimators = 200, random_state = 42)
 
 rf_model.fit(X_train, y_train)
 
-y_pred = rf_model.predict(X_test)
+y_pred_rf = rf_model.predict(X_test)
 
-accuracy = accuracy_score(y_test, y_pred)
+accuracy = accuracy_score(y_test, y_pred_rf)
 print("Random Forest Test Accuracy:", accuracy)
 
-importances = pd.Series(rf_model.feature_importances_, index=X.columns)
-importances.sort_values().plot(kind="barh", figsize=(12,8))
+importances = pd.Series(rf_model.feature_importances_, index = X.columns)
+importances.sort_values().plot(kind = "barh", figsize = (12,8))
 plt.title("Feature Importances")
+plt.tight_layout()
 plt.savefig("Figures/Feature_Importance.png")
 
-# LOGISTIC REGRESSION =========================================================
+# GRADIENT BOOSTING ===========================================================
+gb_model = GradientBoostingClassifier()
+gb_model.fit(X_train, y_train)
+
+y_pred_gb = gb_model.predict(X_test)
+print("Gradient Boosting Accuracy:", accuracy_score(y_test, y_pred_gb))
+
+# SUPPORT VECTOR MACHINE ======================================================
+svm_model = SVC(probability = True)
+svm_model.fit(X_train, y_train)
+
+y_pred_svm = svm_model.predict(X_test)
+print("SVM Accuracy:", accuracy_score(y_test, y_pred_svm), "\n")
+
+# EVALUATION METRICS ==========================================================
+def plot_conf_mat(y_true, y_pred, title):
+    cm = confusion_matrix(y_true, y_pred)
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
+    plt.title(title)
+    plt.savefig(f"Figures/{title}")
+    plt.close()
+
+
+plot_conf_mat(y_test, y_pred_rf, "CM_Random Forest")
+plot_conf_mat(y_test, y_pred_lr, "CM_Logistic Regression")
+plot_conf_mat(y_test, y_pred_gb, "CM_Gradient Boosting")
+plot_conf_mat(y_test, y_pred_svm, "CM_SVM")
+
+print("Random Forest Classification Report:")
+print(classification_report(y_test, y_pred_rf), "\n")
+
+scores = cross_val_score(rf_model, X, y, cv=5, scoring='accuracy')
+print("Random Forest CV Mean:", scores.mean())
+print("Random Forest CV Std:", scores.std(), "\n")
+
+models = {
+    "Logistic Regression": log_reg,
+    "Random Forest": rf_model,
+    "Gradient Boosting": gb_model,
+    "SVM": svm_model
+}
+
+for name, model in models.items():
+    probs = model.predict_proba(X_test)[:,1]
+    auc = roc_auc_score(y_test, probs)
+    print(f"{name} AUC: {auc:.3f}")
+    
+    RocCurveDisplay.from_predictions(y_test, probs)
+    plt.title(f"{name} ROC Curve")
+    plt.savefig(f"Figures/ROC_{name}")
+    plt.close()

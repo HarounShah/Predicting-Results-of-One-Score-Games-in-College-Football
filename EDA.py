@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 import json
 import time
 import seaborn as sns
+from sklearn.feature_selection import mutual_info_classif
 
 # SPLITTING DATA INTO X & Y ===================================================
 df = pd.read_csv('/Users/harounshah/Downloads/Senior Thesis/final_data.csv')
@@ -117,4 +118,27 @@ summaries = summaries.T
 summaries.index.name = 'feature'
 summaries.to_csv("5numsums.csv", index = True)
 
+# 
 
+corrs = X.apply(lambda col: col.corr(y))
+corrs = corrs.sort_values(ascending = False)
+# print("Feature–Target Pearson Correlations:")
+# print(corrs)
+
+mi = mutual_info_classif(X, y, discrete_features = False, random_state = 42)
+
+mi_series = pd.Series(mi, index = X.columns)
+mi_series = mi_series.sort_values(ascending = False)
+
+# print("\nMutual Information Scores:")
+# print(mi_series)
+
+results = pd.DataFrame({
+    'Pearson Correlation': corrs,
+    'Mutual Information Score': mi_series
+})
+
+results = results.sort_values(by = 'Pearson Correlation', ascending = False)
+results['Normalized Mutual Information Score'] = results['Mutual Information Score'] / results['Mutual Information Score'].max()
+print("\nFeature Target Correlations:")
+print(results)
