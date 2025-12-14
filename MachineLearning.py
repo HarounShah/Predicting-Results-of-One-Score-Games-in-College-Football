@@ -9,10 +9,11 @@ import json
 import time
 import seaborn as sns
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, roc_auc_score, RocCurveDisplay
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, roc_auc_score, RocCurveDisplay, ConfusionMatrixDisplay
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
 
 # SPLITTING DATA INTO TRAIN AND TEST ==========================================
 df = pd.read_csv('/Users/harounshah/Downloads/Senior Thesis/final_data.csv')
@@ -60,7 +61,24 @@ svm_model = SVC(probability = True)
 svm_model.fit(X_train, y_train)
 
 y_pred_svm = svm_model.predict(X_test)
-print("SVM Accuracy:", accuracy_score(y_test, y_pred_svm), "\n")
+print("SVM Accuracy:", accuracy_score(y_test, y_pred_svm))
+
+# ============================
+# NAIVE BAYES (GAUSSIAN) MODEL
+# ============================
+
+nb_model = GaussianNB()
+
+# Fit the model
+nb_model.fit(X_train, y_train)
+
+# Predict on test data
+y_pred_nb = nb_model.predict(X_test)
+
+# Accuracy
+nb_accuracy = accuracy_score(y_test, y_pred_nb)
+print("Naive Bayes Test Accuracy:", nb_accuracy, "\n")
+
 
 # EVALUATION METRICS ==========================================================
 def plot_conf_mat(y_true, y_pred, title):
@@ -77,9 +95,10 @@ plot_conf_mat(y_test, y_pred_rf, "CM_Random Forest")
 plot_conf_mat(y_test, y_pred_lr, "CM_Logistic Regression")
 plot_conf_mat(y_test, y_pred_gb, "CM_Gradient Boosting")
 plot_conf_mat(y_test, y_pred_svm, "CM_SVM")
+plot_conf_mat(y_test, y_pred_nb, "CM_Naive Bayes")
 
-print("Random Forest Classification Report:")
-print(classification_report(y_test, y_pred_rf), "\n")
+# print("Random Forest Classification Report:")
+# print(classification_report(y_test, y_pred_rf), "\n")
 
 scores = cross_val_score(rf_model, X, y, cv=5, scoring='accuracy')
 print("Random Forest CV Mean:", scores.mean())
@@ -89,7 +108,8 @@ models = {
     "Logistic Regression": log_reg,
     "Random Forest": rf_model,
     "Gradient Boosting": gb_model,
-    "SVM": svm_model
+    "SVM": svm_model,
+    "NB": nb_model
 }
 
 for name, model in models.items():
