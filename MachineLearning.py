@@ -87,7 +87,7 @@ def plot_conf_mat(y_true, y_pred, title):
     plt.xlabel("Predicted")
     plt.ylabel("Actual")
     plt.title(title)
-    plt.savefig(f"Figures/{title}")
+    plt.savefig(f"Figures/Confusion Matrices/{title}")
     plt.close()
 
 
@@ -100,16 +100,16 @@ plot_conf_mat(y_test, y_pred_nb, "CM_Naive Bayes")
 # print("Random Forest Classification Report:")
 # print(classification_report(y_test, y_pred_rf), "\n")
 
-scores = cross_val_score(rf_model, X, y, cv=5, scoring='accuracy')
-print("Random Forest CV Mean:", scores.mean())
-print("Random Forest CV Std:", scores.std(), "\n")
+# scores = cross_val_score(rf_model, X, y, cv=5, scoring='accuracy')
+# print("Random Forest CV Mean:", scores.mean())
+# print("Random Forest CV Std:", scores.std(), "\n")
 
 models = {
     "Logistic Regression": log_reg,
     "Random Forest": rf_model,
     "Gradient Boosting": gb_model,
     "SVM": svm_model,
-    "NB": nb_model
+    "Naive Bayes": nb_model
 }
 
 for name, model in models.items():
@@ -119,5 +119,5 @@ for name, model in models.items():
     
     RocCurveDisplay.from_predictions(y_test, probs)
     plt.title(f"{name} ROC Curve")
-    plt.savefig(f"Figures/ROC_{name}")
+    plt.savefig(f"Figures/ROC Curves/ROC_{name}")
     plt.close()

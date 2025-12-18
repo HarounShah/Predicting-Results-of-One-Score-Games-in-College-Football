@@ -9,7 +9,7 @@ import json
 import time
 
 # --- Load team-level data ---
-df = pd.read_csv("full_data.csv")
+df = pd.read_csv("full_data_test.csv")
 print(f"\nOriginal shape: {df.shape}")
 
 # --- Split into home and away teams ---
@@ -57,7 +57,20 @@ cols_to_drop = [
     'passesIntercepted_home', # interceptions is better
     'passesIntercepted_away',
     'totalFumbles_home', # fumblesLost is better
-    'totalFumbles_away'
+    'totalFumbles_away',
+    'fumblesRecovered_away',
+    'fumblesRecovered_home',
+
+    # 'sacks_away',
+    # 'tacklesForLoss_away',
+    # 'tackles_away',
+    # 'qbHurries_home',
+    # 'sacks_home',
+    # 'passesDeflected_home',
+    # 'tackles_home',
+    # 'tacklesForLoss_home',
+    # 'qbHurries_away',
+    # 'passesDeflected_away'
     ]
 games = games.drop(cols_to_drop, axis = 1)
 print(f"\nDropped {len(cols_to_drop)} features.")
@@ -113,12 +126,12 @@ print(f"Created {len(num_cols)} difference features.")
 
 
 # --- Remove Nulls and Save the Combined Dataset ---
-games = games[games["one_score"] == 1]
-print(f"\nShape of One-Score Games: {games.shape}")
+# games = games[games["one_score"] == 1]
+# print(f"\nShape of One-Score Games: {games.shape}")
 
 pd.set_option('display.max_rows', None)
 null_counts = games.isnull().sum().sort_values(ascending=False)
-# print(null_counts)
+print(null_counts)
 
 no_nulls = games.dropna().copy()
 print(f"\nShape After Dropping Nulls: {no_nulls.shape}")
@@ -126,5 +139,5 @@ print(f"\nShape After Dropping Nulls: {no_nulls.shape}")
 
 no_nulls['possessionTime_diff'] = no_nulls['possessionTime_diff'].dt.total_seconds().astype(int)
 
-no_nulls.to_csv("final_data.csv", index=False)
-print(f"\n💾 Saved {no_nulls.shape[0]} rows × {no_nulls.shape[1]} columns → final_data.csv")
+no_nulls.to_csv("final_data_test.csv", index=False)
+print(f"\n💾 Saved {no_nulls.shape[0]} rows × {no_nulls.shape[1]} columns → final_data_test.csv")
