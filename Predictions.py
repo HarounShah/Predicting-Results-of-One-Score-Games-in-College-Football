@@ -81,7 +81,6 @@ def create_bracket(avg_diffs, first_round, quarterfinals, model):
     semifinals = [[], []]
     final = []
     quarterfinals = copy.deepcopy(quarterfinals)
-
     # print("\nFirst Round Matchups:", first_round)
     winners1 = []
     for matchup in first_round:
