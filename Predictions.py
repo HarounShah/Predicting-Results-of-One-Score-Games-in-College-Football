@@ -69,10 +69,8 @@ def predict_matchup(df, teams, avg_diffs, model):
     matchup['thirdDown%_diff'] = third_down
 
     test_df = pd.DataFrame([matchup])
-    
-    pred = model.predict(test_df)
 
-    return pred
+    return int(model.predict(test_df)[0])
 
 avg_diffs = get_team_avg_diffs(df, teams)
 
@@ -87,11 +85,10 @@ def create_bracket(avg_diffs, first_round, quarterfinals, model):
     # print("\nFirst Round Matchups:", first_round)
     winners1 = []
     for matchup in first_round:
-        if predict_matchup(df, matchup, avg_diffs, model) == 0:
-            # print(f"Predict {matchup[1]} to beat {matchup[0]}")
+        pred = predict_matchup(df, matchup, avg_diffs, model)
+        if pred == 0:
             winners1.append(matchup[1])
-        elif predict_matchup(df, matchup, avg_diffs, model) == 1:
-            # print(f"Predict {matchup[0]} to beat {matchup[1]}")
+        else:
             winners1.append(matchup[0])
 
     for i in range(4):
@@ -100,11 +97,10 @@ def create_bracket(avg_diffs, first_round, quarterfinals, model):
 
     winners2 = []
     for matchup in quarterfinals:
-        if predict_matchup(df, matchup, avg_diffs, model) == 0:
-            # print(f"Predict {matchup[1]} to beat {matchup[0]}")
+        pred = predict_matchup(df, matchup, avg_diffs, model)
+        if pred == 0:
             winners2.append(matchup[1])
-        elif predict_matchup(df, matchup, avg_diffs, model) == 1:
-            # print(f"Predict {matchup[0]} to beat {matchup[1]}")
+        else:
             winners2.append(matchup[0])
 
     semifinals[0].append(winners2[0])
@@ -113,21 +109,19 @@ def create_bracket(avg_diffs, first_round, quarterfinals, model):
     semifinals[1].append(winners2[3])
     # print("\nSemifinal Matchups:", semifinals)
 
-    for matchup in semifinals:
-        if predict_matchup(df, matchup, avg_diffs, model) == 0:
-            # print(f"Predict {matchup[1]} to beat {matchup[0]}")
-            final.append(matchup[1])
-        elif predict_matchup(df, matchup, avg_diffs, model) == 1:
-            # print(f"Predict {matchup[0]} to beat {matchup[1]}")
-            final.append(matchup[0])
-    # print("\nFinal Matchup:", final)
+    final = []
 
-    if predict_matchup(df, final, avg_diffs, model) == 0:
-        champion = final[1]
-        # print(f"Predict {final[1]} to beat {final[0]}")
-    elif predict_matchup(df, final, avg_diffs, model) == 1:
-        champion = final[0]
-        # print(f"Predict {final[0]} to beat {final[1]}")
+    for matchup in semifinals:
+        team1, team2 = matchup
+        pred = predict_matchup(df, matchup, avg_diffs, model)
+
+        winner = team1 if pred == 1 else team2
+        final.append(winner)
+    
+    team1, team2 = final
+    pred = predict_matchup(df, final, avg_diffs, model)
+
+    champion = team1 if pred == 1 else team2
 
     # ==================
     # VISUALIZATION
@@ -174,10 +168,7 @@ def create_bracket(avg_diffs, first_round, quarterfinals, model):
         team1, team2 = matchup
 
         # Determine winner
-        if predict_matchup(df, matchup, avg_diffs, model) == 0:
-            winner = team2
-        else:
-            winner = team1
+        winner = final[i]
         y_center = y_semi[i] 
 
         # Draw both team names
@@ -196,11 +187,6 @@ def create_bracket(avg_diffs, first_round, quarterfinals, model):
 
     # ---- Final ----
     team1, team2 = final
-
-    if predict_matchup(df, final, avg_diffs, model) == 0:
-        champion = team2
-    else:
-        champion = team1
 
     ax.text(x["final"], y_final + 0.04, team1,
             ha="center", va="center",
