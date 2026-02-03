@@ -121,3 +121,5 @@ for name, model in models.items():
     plt.title(f"{name} ROC Curve")
     plt.savefig(f"Figures/ROC Curves/ROC_{name}")
     plt.close()
+
+print()

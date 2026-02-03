@@ -14,6 +14,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.svm import SVC
 from MachineLearning import log_reg, rf_model, gb_model, svm_model, nb_model
+import copy
 
 # SPLITTING DATA INTO TRAIN AND TEST ==========================================
 df = pd.read_csv('/Users/harounshah/Downloads/Senior Thesis/final_data_test.csv')
@@ -76,11 +77,12 @@ def predict_matchup(df, teams, avg_diffs, model):
 avg_diffs = get_team_avg_diffs(df, teams)
 
 first_round = [['Oregon', 'James Madison'], ['Oklahoma', 'Alabama'], ['Ole Miss', 'Tulane'], ['Texas A&M', 'Miami']]
-quarterfinals = [['Texas A&M'], ['Indiana'], ['Georgia'], ['Ohio State']]
+quarterfinals = [['Texas Tech'], ['Indiana'], ['Georgia'], ['Ohio State']]
 
 def create_bracket(avg_diffs, first_round, quarterfinals, model):
     semifinals = [[], []]
     final = []
+    quarterfinals = copy.deepcopy(quarterfinals)
 
     # print("\nFirst Round Matchups:", first_round)
     winners1 = []
@@ -172,7 +174,7 @@ def create_bracket(avg_diffs, first_round, quarterfinals, model):
         team1, team2 = matchup
 
         # Determine winner
-        if predict_matchup(df, matchup, avg_diffs, log_reg) == 0:
+        if predict_matchup(df, matchup, avg_diffs, model) == 0:
             winner = team2
         else:
             winner = team1
@@ -187,7 +189,6 @@ def create_bracket(avg_diffs, first_round, quarterfinals, model):
                 ha="center", va="center",
                 fontweight="bold" if team2 == winner else "normal")
 
-        # Draw ONLY winner's line to final
         ax.plot([x["semi"], x["final"]],
                 [y_center, y_final],
                 color=LINE_COLOR,
@@ -196,7 +197,7 @@ def create_bracket(avg_diffs, first_round, quarterfinals, model):
     # ---- Final ----
     team1, team2 = final
 
-    if predict_matchup(df, final, avg_diffs, log_reg) == 0:
+    if predict_matchup(df, final, avg_diffs, model) == 0:
         champion = team2
     else:
         champion = team1
@@ -209,7 +210,6 @@ def create_bracket(avg_diffs, first_round, quarterfinals, model):
             ha="center", va="center",
             fontweight="bold" if team2 == champion else "normal")
 
-    # Champion label (optional but nice)
     ax.text(x["final"] + 0.07, y_final,
             f"{champion}",
             ha="left", va="center",
@@ -226,6 +226,24 @@ def create_bracket(avg_diffs, first_round, quarterfinals, model):
     ax.set_ylim(0.05, 0.95)
     plt.savefig(f"Figures/Brackets/Bracket - {models[model]}")
 
+    # ==================
+    # RESULTS
+    # ==================
+    correct = 0
+    for winner in winners1:
+        if winner in ['Oregon', 'Alabama', 'Ole Miss', 'Miami']:
+            correct += 1
+    for winner in winners2:
+        if winner in ['Oregon', 'Indiana', 'Ole Miss', 'Miami']:
+            correct += 1
+    if team1 in ['Indiana', 'Miami']:
+        correct += 1
+    if team2 in ['Indiana', 'Miami']:
+        correct += 1
+    if champion == 'Indiana':
+        correct += 1
+    score = correct / 11
+    print(f"{models[model]} Score: {correct} / 11 = {round(score, 3)}")
 
 for model in [log_reg, rf_model, gb_model, svm_model, nb_model]:
     create_bracket(avg_diffs, first_round, quarterfinals, model)
