@@ -233,7 +233,99 @@ def create_bracket(avg_diffs, first_round, quarterfinals, model):
 for model in [log_reg, rf_model, gb_model, svm_model, nb_model]:
     create_bracket(avg_diffs, first_round, quarterfinals, model)
 
-
+# =====================
+# POST PLAYOFF ANALYSIS
+# =====================
     
+TexMia = [
+    7.4667,   # possessionTime_diff  (7:28)
+    2,        # interceptions_diff
+    0,        # fumblesLost_diff
+    2,        # turnovers_diff
+    -3.8,     # yardsPerRushAttempt_diff
+    -86,      # rushingYards_diff
+    1.0,      # yardsPerPass_diff
+    134,      # netPassingYards_diff
+    48,       # totalYards_diff
+    9,        # firstDowns_diff
+    -3,       # tacklesForLoss_diff
+    -16,      # tackles_diff
+    -5,       # sacks_diff
+    0,        # qbHurries_diff
+    0,        # passesDeflected_diff
+    0.1944    # thirdDown%_diff
+]
 
+GeoOM = [
+    5.0667,    # possessionTime_diff
+    0,         # interceptions_diff
+    0,         # fumblesLost_diff
+    0,         # turnovers_diff
+    -0.7,      # yardsPerRushAttempt_diff
+    13,        # rushingYards_diff
+    -1.3,      # yardsPerPass_diff   <-- from Game ID 401769073
+    -143,      # netPassingYards_diff
+    -130,      # totalYards_diff
+    0,         # firstDowns_diff
+    -2,        # tacklesForLoss_diff
+    18,        # tackles_diff
+    -1,        # sacks_diff
+    0,         # qbHurries_diff
+    4,         # passesDeflected_diff
+    -0.1269    # thirdDown%_diff
+]
 
+OMMia = [
+    -22.7333,   # possessionTime_diff (18:38 − 41:22)
+    -1,         # interceptions_diff
+    0,          # fumblesLost_diff
+    -1,         # turnovers_diff
+    2.1,        # yardsPerRushAttempt_diff
+    -70,        # rushingYards_diff
+    -0.1,       # yardsPerPass_diff
+    9,          # netPassingYards_diff
+    -61,        # totalYards_diff
+    -5,         # firstDowns_diff
+    4,          # tacklesForLoss_diff (5 − 1)
+    42,         # tackles_diff (83 − 41)
+    3,          # sacks_diff (4 − 1)
+    0,          # qbHurries_diff (CFBD says 0 both)
+    4,          # passesDeflected_diff (7 − 3)
+    -0.109    # thirdDown%_diff (≈0.462 − ≈0.571)
+]
+
+IndMia = [
+    12.8,       # possessionTime_diff = 36.4 – 23.6 minutes
+    -1,         # interceptions_diff (0 – 1)
+    0,          # fumblesLost_diff (0 – 0)
+    -1,         # turnovers_diff (0 – 1)
+    -2.3,       # yardsPerRushAttempt_diff (2.9 – 5.2)
+    21,         # rushingYards_diff (131 – 110)
+    -0.4,       # yardsPerPass_diff
+    -46,        # netPassingYards_diff (186 – 232)
+    -25,        # totalYards_diff (317 – 342)
+    5,          # firstDowns_diff (20 – 15)
+    0,          # tacklesForLoss_diff (IND 0 – MIA 0)
+    43,         # tackles_diff (IND ~43 – MIA ~0) *
+    -2,         # sacks_diff (IND 1 – MIA 3)
+    0,          # qbHurries_diff
+    1,          # passesDeflected_diff (IND ~1 – MIA 0)
+    0.101       # thirdDown%_diff (0.375 – 0.273)
+]
+
+feature_names = [
+    "possessionTime_diff", "interceptions_diff", "fumblesLost_diff",
+    "turnovers_diff", "yardsPerRushAttempt_diff", "rushingYards_diff",
+    "yardsPerPass_diff", "netPassingYards_diff", "totalYards_diff",
+    "firstDowns_diff", "tacklesForLoss_diff", "tackles_diff",
+    "sacks_diff", "qbHurries_diff", "passesDeflected_diff", "thirdDown%_diff"
+]
+
+for game in [TexMia, GeoOM, OMMia, IndMia]:
+    df = pd.DataFrame([game], columns=feature_names)
+    # Predict with your trained model
+    pred_class = log_reg.predict(df)
+    pred_proba = log_reg.predict_proba(df)
+
+    print("Predicted class:", pred_class[0])
+    print("Predicted probabilities:", pred_proba[0])

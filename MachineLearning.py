@@ -122,4 +122,4 @@ for name, model in models.items():
     plt.savefig(f"Figures/ROC Curves/ROC_{name}")
     plt.close()
 
-print()
+print(X_train.columns)
