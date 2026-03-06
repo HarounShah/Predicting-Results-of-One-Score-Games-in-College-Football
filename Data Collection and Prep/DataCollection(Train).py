@@ -35,12 +35,12 @@ for year in YEARS:
 
         resp = requests.get(BASE_URL, headers=HEADERS, params=params)
         if resp.status_code != 200:
-            print(f"⚠️ {year} week {week}: HTTP {resp.status_code}")
+            print(f"{year} week {week}: HTTP {resp.status_code}")
             continue
 
         data = resp.json()
         if not data:
-            print(f"⏭️ No data for {year} week {week}")
+            print(f"No data for {year} week {week}")
             continue
 
         # Flatten team stats
@@ -63,7 +63,7 @@ for year in YEARS:
                     record[cat] = val
                 all_records.append(record)
 
-        print(f"✅ {year} week {week}: {len(data)} games ({len(data)*2} team rows)")
+        print(f"{year} week {week}: {len(data)} games ({len(data)*2} team rows)")
         time.sleep(SLEEP_TIME)
 
 # Convert to DataFrame
@@ -75,4 +75,4 @@ for col in df.columns:
 
 # Save full dataset
 df.to_csv("full_data", index=False)
-print(f"\n💾 Saved {df.shape[0]} rows × {df.shape[1]} columns to full_data.csv")
+print(f"\nSaved {df.shape[0]} rows × {df.shape[1]} columns to full_data.csv")
