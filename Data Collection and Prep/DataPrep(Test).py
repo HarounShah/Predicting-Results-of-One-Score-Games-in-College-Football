@@ -140,4 +140,4 @@ print(f"\nShape After Dropping Nulls: {no_nulls.shape}")
 no_nulls['possessionTime_diff'] = no_nulls['possessionTime_diff'].dt.total_seconds().astype(int)
 
 no_nulls.to_csv("final_data_test.csv", index=False)
-print(f"\n💾 Saved {no_nulls.shape[0]} rows × {no_nulls.shape[1]} columns → final_data_test.csv")
+print(f"\n Saved {no_nulls.shape[0]} rows × {no_nulls.shape[1]} columns → final_data_test.csv")

@@ -5,5 +5,11 @@ Data Collection:
 Data Cleaning:
 
 Exploratory Data Analysis:
+- Dataset has mild class imbalance in one-score games (`54.63%` home wins vs `45.37%` home losses; `n=2623`), so no severe imbalance treatment is required.
+- Distributional EDA (histograms/boxplots/correlation) plus statistical testing shows strong signal in turnover, pressure, and efficiency differentials.
+- Simplified per-feature testing (Welch t-test + Cohen's d) indicates `tackles_diff` has negligible effect and is not statistically significant.
+- Win-rate by quantile bins (`Figures/WinRateByFeatureBins.png`, `win_rate_by_feature_bins.csv`) confirms monotonic trends for several top features and improves interpretability.
+- Because `turnovers_diff` already captures turnover events at aggregate level, `interceptions_diff` and `fumblesLost_diff` are treated as redundant for primary modeling.
+- Proposed feature removals before modeling: `tackles_diff`, `interceptions_diff`, and `fumblesLost_diff`.
 
 Machine Learning:

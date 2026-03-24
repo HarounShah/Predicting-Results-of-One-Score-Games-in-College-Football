@@ -16,7 +16,7 @@ from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 
 # SPLITTING DATA INTO TRAIN AND TEST ==========================================
-df = pd.read_csv('/Users/harounshah/Downloads/Senior Thesis/final_data.csv')
+df = pd.read_csv('/Users/harounshah/Downloads/Senior Thesis/final_data_EDA.csv')
 
 print(f"\nMatrix Dimensions w/ all Features: {df.shape}\n")
 
