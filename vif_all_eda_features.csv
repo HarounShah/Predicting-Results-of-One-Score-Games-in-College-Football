@@ -1,0 +1,17 @@
+feature,VIF,interpretation
+interceptions_diff,inf,high (consider review)
+fumblesLost_diff,inf,high (consider review)
+turnovers_diff,inf,high (consider review)
+netPassingYards_diff,109424.47366786656,high (consider review)
+rushingYards_diff,95891.1215495655,high (consider review)
+totalYards_diff,80368.74544372951,high (consider review)
+yardsPerRushAttempt_diff,5.542267212695175,moderate
+firstDowns_diff,4.05444995292609,low
+possessionTime_diff,2.813837265621559,low
+yardsPerPass_diff,1.9883668353788744,low
+tackles_diff,1.8943479726779928,low
+tacklesForLoss_diff,1.6298154649223902,low
+sacks_diff,1.59668975822914,low
+thirdDown%_diff,1.3191602505484117,low
+passesDeflected_diff,1.273617638689406,low
+qbHurries_diff,1.1086140709243677,low
