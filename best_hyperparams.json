@@ -1,0 +1,33 @@
+{
+  "log_reg": {
+    "lr__C": 10,
+    "lr__class_weight": null,
+    "lr__penalty": "l1"
+  },
+  "random_forest": {
+    "n_estimators": 600,
+    "min_samples_split": 10,
+    "min_samples_leaf": 2,
+    "max_features": "sqrt",
+    "max_depth": 8,
+    "class_weight": null
+  },
+  "grad_boost": {
+    "subsample": 0.8,
+    "n_estimators": 600,
+    "min_samples_split": 10,
+    "min_samples_leaf": 4,
+    "max_features": "log2",
+    "max_depth": 2,
+    "learning_rate": 0.05
+  },
+  "svm": {
+    "svm__kernel": "linear",
+    "svm__gamma": 1,
+    "svm__class_weight": "balanced",
+    "svm__C": 0.1
+  },
+  "naive_bayes": {
+    "var_smoothing": 3.1622776601683795e-10
+  }
+}
