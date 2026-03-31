@@ -11,5 +11,7 @@ Exploratory Data Analysis:
 - Win-rate by quantile bins (`Figures/WinRateByFeatureBins.png`, `win_rate_by_feature_bins.csv`) confirms monotonic trends for several top features and improves interpretability.
 - Because `turnovers_diff` already captures turnover events at aggregate level, `interceptions_diff` and `fumblesLost_diff` are treated as redundant for primary modeling.
 - Proposed feature removals before modeling: `tackles_diff`, `interceptions_diff`, and `fumblesLost_diff`.
+- Updated modeling feature removals: additionally drop `totalYards_diff` to reduce yardage redundancy (VIF/correlation suggests strong overlap and CV ablation showed negligible performance change).
+- VIF on full EDA features (`vif_all_eda_features.csv`) includes all original `*_diff` variables before feature removal; yardage-related columns show very high VIF (near-linear overlap).
 
 Machine Learning:

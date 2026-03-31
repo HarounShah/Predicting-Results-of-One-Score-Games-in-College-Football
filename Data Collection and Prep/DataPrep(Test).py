@@ -126,8 +126,8 @@ print(f"Created {len(num_cols)} difference features.")
 
 
 # --- Remove Nulls and Save the Combined Dataset ---
-# games = games[games["one_score"] == 1]
-# print(f"\nShape of One-Score Games: {games.shape}")
+games = games[games["one_score"] == 1]
+print(f"\nShape of One-Score Games: {games.shape}")
 
 pd.set_option('display.max_rows', None)
 null_counts = games.isnull().sum().sort_values(ascending=False)

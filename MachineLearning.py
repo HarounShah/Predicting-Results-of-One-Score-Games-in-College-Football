@@ -8,30 +8,62 @@ from bs4 import BeautifulSoup
 import json
 import time
 import seaborn as sns
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import cross_val_score, StratifiedKFold, GridSearchCV
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, roc_auc_score, RocCurveDisplay, ConfusionMatrixDisplay
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
-# SPLITTING DATA INTO TRAIN AND TEST ==========================================
-df = pd.read_csv('/Users/harounshah/Downloads/Senior Thesis/final_data_EDA.csv')
+# TRAIN ON TRAINING SET, TEST ON 2025 SEASON ==================================
+train_df = pd.read_csv('/Users/harounshah/Downloads/Senior Thesis/final_data_EDA.csv')
+test_df = pd.read_csv('/Users/harounshah/Downloads/Senior Thesis/final_data_test.csv')
 
-print(f"\nMatrix Dimensions w/ all Features: {df.shape}\n")
+y_train = train_df['home_win']
+X_train = train_df.filter(like="diff", axis=1)
 
-y = df['home_win']
-X = df.filter(like="diff", axis=1) # Taking only the difference features
+y_test = test_df['home_win']
+X_test_raw = test_df.filter(like="diff", axis=1)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 42, stratify = y)
+# Align test columns to the exact training feature set.
+X_test = X_test_raw.reindex(columns=X_train.columns)
+
+print(f"\nX_train shape: {X_train.shape}")
+print(f"X_test shape:  {X_test.shape}\n")
 
 # LOGISTIC REGRESSION =========================================================
 
-log_reg = LogisticRegression(max_iter = 5000)
-log_reg.fit(X_train, y_train)
+# Hyperparameter tuning (training only; 2025 remains held-out)
+lr_pipe = Pipeline([
+    ("scaler", StandardScaler()),
+    ("lr", LogisticRegression(max_iter=5000, solver="liblinear"))
+])
+
+param_grid = {
+    "lr__C": [0.01, 0.1, 1, 10, 100],
+    "lr__penalty": ["l1", "l2"],
+    "lr__class_weight": [None, "balanced"]
+}
+
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+lr_search = GridSearchCV(
+    estimator=lr_pipe,
+    param_grid=param_grid,
+    scoring="roc_auc",
+    cv=cv,
+    n_jobs=-1
+)
+lr_search.fit(X_train, y_train)
+
+print("Best Logistic Regression (CV AUC):", round(lr_search.best_score_, 3))
+print("Best Logistic Regression Params:", lr_search.best_params_)
+
+log_reg = lr_search.best_estimator_
 
 y_pred_lr = log_reg.predict(X_test)
-print("Logistic Regression Accuracy:", accuracy_score(y_test, y_pred_lr))
+print("Logistic Regression Test Accuracy:", accuracy_score(y_test, y_pred_lr))
 
 # RANDOM FOREST ===============================================================
 rf_model = RandomForestClassifier(n_estimators = 200, random_state = 42)
@@ -43,7 +75,7 @@ y_pred_rf = rf_model.predict(X_test)
 accuracy = accuracy_score(y_test, y_pred_rf)
 print("Random Forest Test Accuracy:", accuracy)
 
-importances = pd.Series(rf_model.feature_importances_, index = X.columns)
+importances = pd.Series(rf_model.feature_importances_, index = X_train.columns)
 importances.sort_values().plot(kind = "barh", figsize = (12,8))
 plt.title("Feature Importances")
 plt.tight_layout()
@@ -54,18 +86,16 @@ gb_model = GradientBoostingClassifier()
 gb_model.fit(X_train, y_train)
 
 y_pred_gb = gb_model.predict(X_test)
-print("Gradient Boosting Accuracy:", accuracy_score(y_test, y_pred_gb))
+print("Gradient Boosting Test Accuracy:", accuracy_score(y_test, y_pred_gb))
 
 # SUPPORT VECTOR MACHINE ======================================================
 svm_model = SVC(probability = True)
 svm_model.fit(X_train, y_train)
 
 y_pred_svm = svm_model.predict(X_test)
-print("SVM Accuracy:", accuracy_score(y_test, y_pred_svm))
+print("SVM Test Accuracy:", accuracy_score(y_test, y_pred_svm))
 
-# ============================
-# NAIVE BAYES (GAUSSIAN) MODEL
-# ============================
+# NAIVE BAYES (GAUSSIAN) ======================================================
 
 nb_model = GaussianNB()
 
@@ -121,5 +151,3 @@ for name, model in models.items():
     plt.title(f"{name} ROC Curve")
     plt.savefig(f"Figures/ROC Curves/ROC_{name}")
     plt.close()
-
-print(X_train.columns)

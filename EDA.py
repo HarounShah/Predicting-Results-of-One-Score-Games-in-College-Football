@@ -9,6 +9,7 @@ import json
 import time
 import seaborn as sns
 from sklearn.feature_selection import mutual_info_classif
+from sklearn.linear_model import LinearRegression
 from scipy.stats import ttest_ind
 
 # SPLITTING DATA INTO X & Y ===================================================
@@ -289,8 +290,41 @@ plt.savefig("Figures/WinRateByFeatureBins.png", bbox_inches="tight")
 bin_summary_df = pd.DataFrame(bin_rows)
 bin_summary_df.to_csv("win_rate_by_feature_bins.csv", index=False)
 
+# VIF (variance inflation factor) — multicollinearity across full EDA features
+# VIF_j = 1 / (1 - R^2_j) where R^2_j is from regressing feature j on all others.
+def compute_vif(X_df):
+    X_arr = X_df.values.astype(float)
+    n, p = X_arr.shape
+    vifs = []
+    for i in range(p):
+        y_col = X_arr[:, i]
+        X_others = np.delete(X_arr, i, axis=1)
+        if X_others.shape[1] == 0:
+            vifs.append(np.nan)
+            continue
+        lr = LinearRegression().fit(X_others, y_col)
+        r2 = lr.score(X_others, y_col)
+        vifs.append(1.0 / (1.0 - r2) if r2 < 1.0 - 1e-12 else np.inf)
+    return pd.Series(vifs, index=X_df.columns, name="VIF")
+
+vif_series = compute_vif(X)
+vif_df = vif_series.reset_index()
+vif_df.columns = ["feature", "VIF"]
+vif_df = vif_df.sort_values("VIF", ascending=False)
+vif_df["interpretation"] = vif_df["VIF"].apply(
+    lambda v: "high (consider review)" if v > 10 else ("moderate" if v > 5 else "low")
+)
+print("\nVIF (all EDA difference features):")
+print(vif_df.to_string(index=False))
+vif_df.to_csv("vif_all_eda_features.csv", index=False)
+print("\nSaved VIF table: vif_all_eda_features.csv")
+
 # POST-EDA FEATURE SET FOR MODELING ============================================
-features_to_drop_for_modeling = ["tackles_diff", "interceptions_diff", "fumblesLost_diff"]
+features_to_drop_for_modeling = [
+    "tackles_diff",
+    "interceptions_diff",
+    "fumblesLost_diff",
+    "totalYards_diff"]
 X_model = X.drop(columns=features_to_drop_for_modeling, errors="ignore")
 
 print(f"\nOriginal EDA feature count: {X.shape[1]}")
@@ -298,8 +332,3 @@ print(f"Modeling feature count: {X_model.shape[1]}")
 print("Dropped for modeling:", features_to_drop_for_modeling)
 print("\nModeling features:")
 print(X_model.columns)
-
-modeling_df = X_model.copy()
-modeling_df["home_win"] = y.values
-modeling_df.to_csv("final_data_EDA.csv", index=False)
-print("\nSaved post-EDA modeling dataset: final_data_EDA.csv")
