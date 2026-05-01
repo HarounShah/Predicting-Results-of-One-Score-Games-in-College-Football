@@ -47,13 +47,15 @@
     keywordstyle=\color{blue},
     stringstyle=\color{red},
     commentstyle=\color{green!50!black},
+    upquote=true,
+    columns=fullflexible,
     showstringspaces=false,
     breaklines=true,
     frame=single
 }
 
 %% Bibliography support
-\usepackage[backend=biber,sorting=nty,isbn=false,url=false]{biblatex} 
+\usepackage[backend=biber,sorting=nty,sortcites=true,isbn=false,url=false]{biblatex} 
 % notes on settings:
 % backend=biber: we are using the newer tool biber for processing (rather than the older bibtex program)
 % isbn=false, because printing ISBNs is distracting clutter
@@ -112,7 +114,9 @@
 
 %  Your data for title, author, etc.
 
-\title[A Closer Look at One-Score Games In College Football]{A Closer Look at One-Score Games In College Football} % here, the command format is  \title[Abbreviated Title for Header]{Full Title}. But if your title is short, simply use \title{Full Title}
+\title[Down to the Wire: Machine Learning in
+One-Score College Football Games]{Down to the Wire: Machine Learning in
+One-Score College Football Games} % here, the command format is  \title[Abbreviated Title for Header]{Full Title}. But if your title is short, simply use \title{Full Title}
 \thanks{This document is a senior thesis submitted to the Department of Mathematics and Statistics at Haverford College in partial fulfillment of the requirements for a major in Mathematics.} % REQUIRED: don't change this line
 \author{Haroun Shah}
 \date{March 6, 2026} % don't forget to update the date!
@@ -126,22 +130,21 @@ In this senior thesis, we will enter the world of sports analytics by utilizing 
 \maketitle % Actually typeset the title, author, etc.
 
 \section*{Acknowledgments}
-I would like to thank my thesis advisor and the faculty in the Department of Mathematics and Statistics at Haverford College for their guidance and support throughout this project. I am also grateful to my family and friends for their encouragement throughout the senior thesis process.
+I would like to thank my thesis advisor Dr. Lawrence Seminario-Romero and the faculty in the Department of Mathematics and Statistics at Haverford College for their guidance and support throughout this project. I am also grateful to my family and friends for their encouragement throughout the senior thesis process.
 
 
 \tableofcontents % OPTIONAL. See https://en.wikibooks.org/wiki/LaTeX/Document_Structure#Table_of_contents for more information.
 
-%%-------------------------------------------------------------------------------------------------
 %% CUT START: you can delete all of the following content, through "CUT STOP" below
 \section{Introduction}
 
 Nowadays, every sports fan has strong opinions about their favorite teams or players, and very rarely are they hesitant to share their input. Fans like to think that they know the exact reason for their team’s poor performances, and they can always make an argument as to why their favorite player is better than the rest. Largely due to social media, fans' opinions often are shaped by the “hot-takes” and highlights seen online, but to gain a better understanding of what truly determines the results of the biggest sports games, we need to turn to the statistics.
 
-As sports and technology have evolved in recent years, \textit{machine learning} has become integral to how coaches, teams, leagues, and sports analysts understand and evaluate performance \cite{rein2016bigdata, lewis2003moneyball}. With fairly accessible, high-quality datasets and new advancements in computational power, it’s now possible to investigate many complex questions about game strategy, team efficiency, and competitive outcomes across the world of sports. College football provides a rich environment for quantitative study due to its large number of features, diverse styles of play, and significant variability in team strength and performance from week to week. As a result, it has become quite an appealing domain for applying methods from statistics, data science, and machine learning \cite{hastie2009elements, james2021introduction}.
+As sports and technology have evolved in recent years, \textit{machine learning} has become integral to how coaches, teams, leagues, and sports analysts understand and evaluate performance \cite{rein2016bigdata, lewis2003moneyball}. With fairly accessible, high-quality datasets and new advancements in computational power, it’s now possible to investigate many complex questions about game strategy, team efficiency, and competitive outcomes across the world of sports. College football provides a rich environment for quantitative study due to its large number of features, diverse styles of play, and significant variability in team strength and performance from week to week. As a result, it has become quite an appealing domain for applying methods from statistics, data science, and machine learning \cite{hastie2009elements, james2021introduction}.\\
 
-Among the many facets of college football, \textit{one-score games} (matchups decided by a point differential of 8 or less) represent an interesting scenario. These games are defined by narrow margins in which small changes in team/individual performance can alter the final result. Unlike “blowouts”, where clear differences in talent typically dictate outcomes, one-score contests often hinge on subtle details such as turnover margin, total yards, third-down conversion rates, or time of possession. Understanding what differentiates winning and losing performances in these tight scenarios is valuable not only for predictive modeling but also for gaining insight into how teams respond under such high-pressure conditions.
+Among the many facets of college football, \textit{one-score games} (matchups decided by a point differential of 8 or less) represent an interesting scenario. These games are defined by narrow margins in which small changes in team/individual performance can alter the final result. Unlike “blowouts”, where clear differences in talent typically dictate outcomes, one-score contests often hinge on subtle details such as turnover margin, total yards, third-down conversion rates, or time of possession. Understanding what differentiates winning and losing performances in these tight scenarios is valuable not only for predictive modeling but also for gaining insight into how teams respond under such high-pressure conditions.\\
 
-The purpose of this senior thesis is to investigate the statistical patterns and performance metrics that most strongly influence the outcomes of one-score college football games. By compiling a dataset of team statistics of one score matchups from NCAA Division I Football Bowl Subdivision (FBS) \footnote{FBS is the highest level of collegiate football in the NCAA} games played from 2014 to 2024, this senior thesis aims to explore which of these metrics are most indicative of success. The exploratory data analysis conducted in this thesis will examine the structure of the dataset, summarize/understand the key variables, identify meaningful relationships, and highlight which metrics are most closely associated with winning these close games. These findings will serve as the foundation for the next phase of the project, in which machine learning methods such as logistic regression, random forests, gradient boosting, support vector machines, and naive Bayes will be utilized to classify the outcomes of one-score games.
+The purpose of this senior thesis is to investigate the statistical patterns and performance metrics that most strongly influence the outcomes of one-score college football games. By compiling a dataset of team statistics of one score matchups from NCAA Division I Football Bowl Subdivision (FBS) \footnote{FBS is the highest level of collegiate football in the NCAA.} games played from 2014 to 2024, this senior thesis aims to explore which of these metrics are most indicative of success. The exploratory data analysis conducted in this thesis will examine the structure of the dataset, summarize/understand the key variables, identify meaningful relationships, and highlight which metrics are most closely associated with winning these close games. These findings will serve as the foundation for the next phase of the project, in which machine learning methods such as logistic regression, random forests, gradient boosting, support vector machines, and naive Bayes will be utilized to classify the outcomes of one-score games.\\
 
 Beyond its value in predictive modeling, this work contributes to the broader field of sports analytics \cite{rein2016bigdata} by examining the specific statistical determinants of competitive balance in college football. Understanding the dynamics of close games is important for coaches seeking strategic advantages, analysts interpreting team performance, and team managers building the most well-rounded roster. The methods used in this project, ranging from feature engineering exploration to supervised learning, are generalizable and could be extended to other football leagues, most notably, the National Football League. Ultimately, this research aims to connect these rigorous quantitative methods with practical insights to understand one of the most uncertain yet strategically rich aspects of college football: the keys to winning close games.
 
@@ -164,7 +167,8 @@ for id in game_ids:
     game_urls.append(
         f'https://www.espn.com/college-football/matchup/_/gameId/{id}')
 \end{lstlisting}
-we were able to iterate through each web page and extract the necessary team stats. After compiling the data and selecting only the games with a point differential 8 or less, we faced the problem of missing data. Specifically, almost all of the defensive stats (e.g. sacks, tackles, pass deflections, etc.) were missing from a large majority of the seasons we looked at. Most likely, this missing data was, at one point, recorded and displayed on ESPN's website, but has since been removed in an attempt to minimize the costs of data storage and maintenance. It may also be useful to keep in mind that ESPN may prioritize the long-term storage of professional sports data from leagues like the NBA (National Basketball Association) or NFL (National Football League) over the data from college sports like NCAA football. Based on a foundational understanding of college football, these missing defensive statistics were far too important to be left out of the modeling phase, so another method of data collection was necessary.
+
+We were able to iterate through each web page and extract the necessary team stats. After compiling the data and selecting only the games with a point differential 8 or less, we faced the problem of missing data. Specifically, almost all of the defensive stats (e.g. sacks, tackles, pass deflections, etc.) were missing from a large majority of the seasons we looked at. Most likely, this missing data was, at one point, recorded and displayed on ESPN's website, but has since been removed in an attempt to minimize the costs of data storage and maintenance. It may also be useful to keep in mind that ESPN may prioritize the long-term storage of professional sports data from leagues like the NBA (National Basketball Association) or NFL (National Football League) over the data from college sports like NCAA football. Based on a foundational understanding of college football, these missing defensive statistics were far too important to be left out of the modeling phase, so another method of data collection was necessary.
 
 \subsection{CFBD API}
 The \href{collegefootballdata.com}{CFBD website} offers a free API key to directly query their database from a personal device. Using this method, we were able to again retrieve the game IDs, then use those to fetch the team statistics from all of the games. In total, this method retrieved data from 9,414 FBS games and included 43 features for each team (game ID, points, time of possession, etc.). See the Python code for the API queries below. This method still had some missing data; however, it appeared to be the most complete option to allow us to conduct data pre-processing.
